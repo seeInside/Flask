@@ -1,15 +1,46 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
 {% block title %}Flasky{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-    	</h1>hello,{% if name %}{{name}}{% else %}Stranger{% endif %}</h1>
-	{% if not know %}<p>pleased to meet you, {{user}}</p>
-{% else %}<p> happy to see you again :{{user}}</p>{% endif %}
+    {% if current_user.username %}
+    <h1>Hello, {{ current_user.username }}!</h1>
+    {% else %}
+    <h1>Hello, Stranger</h1>
+    {% endif %}
 </div>
-{{wtf.quick_form(form)}}
-<p>The local date and time is {{ moment(current_time).format('LLL') }}.</p>
-<p>That was {{ moment(current_time).fromNow(refresh=True) }}.</p>
+<div>
+    {% if current_user.can(Permission.WRITE_ARTICLES) %}
+    {{ wtf.quick_form(form) }}
+    {% endif %}
+</div>
+<div class="post-tabs">
+    <ul class="nav nav-tabs">
+        <li {% if not show_followed %} class="active" {% endif %}>
+            <a href="{{url_for('.show_all')}}">All</a>
+        </li>
+        <li {% if show_followed %} class="active"  {% endif %}>
+            <a href="{{url_for('.show_followed')}}">Followers</a>
+        </li>
+    </ul>
+
+    {% include '_posts.html'%}
+
+</div>
+<div>
+
+</div>
+
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.index') }}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
 {% endblock %}
