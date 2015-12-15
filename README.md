@@ -6,45 +6,45 @@
 * 可作为Web Service向移动端提供API接口
 
 #主要功能
-> 主页
->
+>     主页
+
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/main.png)
 
 
 
 
-> 登录
+>     登录
 >
 
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/log.png)
 
-> 注册
+>     注册
 >
 
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/reg.png)
 
-> 支持Mark Down语法，并可实时预览
+>     支持Mark Down语法，并可实时预览
 >
 
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/mark.png)
 
-> 编辑用户资料
+>     编辑用户资料
 >
 
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/pro.png)
 
-> 评论
+>     评论
 >
 
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/comment.png)
 
-> 关注其他用户
+>     关注其他用户
 >
 
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/follo.png)
 
 
-> 管理员可管理评论
+>     管理员可管理评论
 >
 
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/commet_moderate.png)
