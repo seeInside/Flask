@@ -2,9 +2,9 @@ from flask import render_template, session, redirect, url_for, flash, abort, \
     request, current_app, make_response
 from flask.ext.login import login_required, current_user
 from . import main
-from .forms import NameForm, ProfileForm, PostForm, CommentForm
+from .forms import NameForm, ProfileForm, PostForm, CommentForm, AdminEditProfileForm
 from ..import db
-from ..models import User, Permission, Post, Comment
+from ..models import User, Permission, Post, Comment, Role
 from ..decorators import admin_required, permission_required
 
 
@@ -138,6 +138,42 @@ def edit_profile_admin(i):
     form.location.data = user.location
     form.about_me.data = user.about_me
     return render_template('edit_profile.html', form=form, user=user)
+
+
+@main.route('/moderate')
+@login_required
+@permission_required(Permission.COMMENT)
+def moderate():
+    page = request.args.get('page', 1, type=int)
+    pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
+        error_out=False
+    )
+    comments = pagination.items
+    return render_template('moderate.html', comments=comments,
+                           pagination=pagination, page=page)
+
+
+@main.route('/moderate/enable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def moderate_enable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = False
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('.moderate', page=request.args.get('page', 1, type=int)))
+
+
+@main.route('/moderate/disable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def moderate_disable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = True
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('.moderate', page=request.args.get('page', 1, type=int)))
 
 
 @main.route('/follow/<username>')

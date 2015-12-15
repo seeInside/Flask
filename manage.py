@@ -22,5 +22,24 @@ def test():
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity = 2).run(tests)
 
+
+@manager.command
+def deploy():
+    """Run the deploy tasks."""
+    from flask.ext.migrate import upgrade
+    from app.models import Role, User
+
+    # upgrade the database
+    upgrade()
+
+    # create the user's role (roles table)
+    Role.insert_roles()
+
+    # make every users follow himself
+    User.add_self_follows()
+
+
+
+
 if __name__ == '__main__':
     manager.run()

@@ -1,9 +1,11 @@
+from itsdangerous import Serializer
+from werkzeug.routing import ValidationError
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask.ext.login import UserMixin, AnonymousUserMixin
 from . import login_manager
 from markdown import markdown
-from flask import current_app
+from flask import current_app, url_for
 from datetime import datetime
 import bleach
 
@@ -74,6 +76,19 @@ class User(UserMixin, db.Model):
                                backref=db.backref('followed', lazy='joined'),
                                lazy='dynamic',
                                cascade='all, delete-orphan')
+
+    def generate_auth_token(self, expiration):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data['id'])
     
     @staticmethod
     def generate_fake(count = 100):
@@ -147,6 +162,18 @@ class User(UserMixin, db.Model):
     def is_followed_by(self, user):
         return self.follower.filter_by(follower_id=user.id).first() is not None
 
+    def to_json(self):
+        json_user = {
+            'url': url_for('api.get_post', id=self.id, _external=True),
+            'username': self.username,
+            'membersince': self.member_since,
+            'last_seen': self.last_seen,
+            'posts': url_for('api.get_post', id=self.id, _external=True),
+            'followed_posts': url_for('api.get_user_followed_posts', id=self.id, _external=True),
+            'post_count': self.posts.count()
+        }
+        return json_user
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -191,7 +218,25 @@ class Post(db.Model):
                 markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
 
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_post', id=self.id, _external=True),
+            'body': self.body,
+            'timestamp': self.timestamp,
+            'author': url_for('api.get_user', id=self.author_id, _external=True),
+            'comments': url_for('api.get_comment', id=self.id, _external=True),
+            'comments_count': self.comments.count()
+        }
+        return json_post
+
+    def from_json(self, json_post):
+        body = json_post.get('body')
+        if body is None or body =='':
+            raise ValidationError('post does not have a body')
+        return Post(body=body)
+
 db.event.listen(Post.body, 'set', Post.on_changed_body)
+
 
 class Comment(db.Model):
     __tablename__ = 'comments'

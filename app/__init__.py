@@ -5,6 +5,7 @@ from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.pagedown import PageDown
+
 # from flask.ext.markdown import MarkDown
 from config import config
 
@@ -32,11 +33,16 @@ def create_app(config_name):
     db.init_app(app)
     login_manager.init_app(app)
     pagedown.init_app(app)
-    # makedown.init_app(app)
+    #markedown.init_app(app)
+
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     from .main import main as main_blueprint
-    from .auth import auth as auth_blueprint
-    
     app.register_blueprint(main_blueprint)
-    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+
+    from .api1 import api as api1_blueprint
+    app.register_blueprint(api1_blueprint, url_prefix='/api/v1.0')
+
+
     return app
