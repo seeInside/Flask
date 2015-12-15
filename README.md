@@ -1,15 +1,17 @@
-# Flask
-* 这是我在学习Python写Web的过程中的，写的一个博客项目，参考书籍《Flask Web开发——基于Python的Web应用开发实战》
+## Flask
+* 这是我在学习Flask Web的过程中，写的一个博客项目，参考书籍《Flask Web开发——基于Python的Web应用开发实战》，目前对整个框架有了一个基本大概的了解，也深知还有非常多的知识需要学习与总结。
 # 简介
 * 使用的模板： Twitter Bootstrap
 * 数据库： SQLite
 * 可作为Web Service向移动端提供API接口
 
 #主要功能
-* 主页
-
+> 主页
 
 ![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/main.png)
+
+
+
 
 * 登录
 
@@ -45,4 +47,4 @@
 * 管理员可管理评论
 
 
-![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/comment_moderate.png)
+![mahua](http://7xp7t3.com1.z0.glb.clouddn.com/commet_moderate.png)
